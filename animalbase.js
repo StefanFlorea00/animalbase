@@ -20,18 +20,24 @@ function start() {
   for (const button of buttons) {
     button.addEventListener("click", function () {
       filterAnimals(this.dataset.filter);
+      displayList(displayedAnimals);
     });
   }
 
   const sorters = document.querySelectorAll("#sorting th");
+  let maxSelected = 0;
   for (const sorter of sorters) {
     sorter.addEventListener("click", function () {
-      if (this.dataset.sortDirection == "asc")
+      if (maxSelected <= 1) {
+        this.classList.toggle("sortby");
+      }
+      if (this.dataset.sortDirection == "asc") {
         this.dataset.sortDirection = "desc";
-      else if (this.dataset.sortDirection == "desc")
+      } else if (this.dataset.sortDirection == "desc") {
         this.dataset.sortDirection = "asc";
+      }
 
-      sortAnimals(this.dataset.sort, this.dataset.sortDirection);
+      displayList(sortAnimals(this.dataset.sort, this.dataset.sortDirection));
     });
   }
   loadJSON();
@@ -43,13 +49,11 @@ function start() {
 function filterAnimals(type) {
   if (type == "*") displayedAnimals = allAnimals;
   else displayedAnimals = allAnimals.filter((animal) => animal.type == type);
-  displayList(displayedAnimals);
 }
 
 function sortAnimals(field, direction) {
   let sortedAnimals;
-  sortedAnimals = sortByField(field, displayedAnimals, direction);
-  displayList(sortedAnimals);
+  return (sortedAnimals = sortByField(field, displayedAnimals, direction));
 }
 
 function sortByField(field, array, direction) {
